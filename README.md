@@ -26,4 +26,4 @@ Examples for orientaton:
 
 ![right](https://github.com/CauseYNot/Infinite-Craft-Solver/assets/47083222/460f5342-18df-4314-be6f-13c4df39d460)
 
-Thanks to Mikarific for ideas on the database storages (is that what I should call it?)
+Thanks to Mikarific for ideas on the database storages (is that what I should call it?), her code can be found [here](https://github.com/Mikarific/InfiniteCraftHelper/)
