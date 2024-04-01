@@ -1,10 +1,9 @@
 
 import os
-from help_embed import help_embed_pages
+from help_embed import help_paginator
 import json
 from discord import Embed, File, SlashCommandOptionType, Attachment
 from discord.ext import bridge
-from discord.ext.pages import Page, Paginator
 from discord.commands import option
 from solver import solver
 from dotenv import load_dotenv
@@ -73,8 +72,7 @@ def _best_recipe(recipes, key, nodes, label_to_id, new_id):
 @bot.slash_command(description=HELP_DESC)
 async def help(ctx):
     # Creates Paginator to switch between help pages
-    paginator = Paginator(pages=help_embed_pages, use_default_buttons=True)
-    await paginator.respond(ctx)
+    await help_paginator.respond(ctx)
 
 @bot.slash_command(description=ADD_TO_DATABASE_DESC)
 @option('file', type=Attachment, required=True)
