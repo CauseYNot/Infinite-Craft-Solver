@@ -82,7 +82,7 @@ async def add_to_database(ctx, file):
     # Check for json file
     if file.filename.split('.')[-1] != 'json':
         await ctx.respond('The file you sent is not a json file!')
-    with open('./nodes.json') as nodes_file, open('./id.json') as id_file:
+    with open('./input/nodes.json') as nodes_file, open('./input/id.json') as id_file:
         # Initialise string to write to
         nodes = json.load(nodes_file)
         label_to_id = json.load(id_file)
@@ -113,7 +113,7 @@ async def add_to_database(ctx, file):
     # Check if the file had added any new recipes
     if added_recipes > 0:
         # Write the updated nodes and label_to_id to the files
-        with open('./nodes.json', 'w') as nodes_file, open('./id.json', 'w') as id_file:
+        with open('./input/nodes.json', 'w') as nodes_file, open('./input/id.json', 'w') as id_file:
             nodes_file.write(json.dumps(nodes, indent=4, cls=_SetEncoder))
             id_file.write(json.dumps(label_to_id, indent=4))
 

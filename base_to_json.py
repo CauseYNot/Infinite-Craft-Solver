@@ -72,6 +72,6 @@ with open('./base_recipes.csv') as file:
     
     label_to_id['new_id'] = new_id
 
-with open('nodes.json', 'w') as nodes_file, open('id.json', 'w') as id_file:
+with open('./input/nodes.json', 'w') as nodes_file, open('./input/id.json', 'w') as id_file:
     nodes_file.write(json.dumps(nodes, indent=4, ensure_ascii=False, cls=SetEncoder))
     id_file.write(json.dumps(label_to_id, indent=4, ensure_ascii=False))

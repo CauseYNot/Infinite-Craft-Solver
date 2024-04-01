@@ -2,7 +2,7 @@
 from binary_tree_display import BinaryTreeNode
 import json
 
-with open('./nodes.json') as nodes_file, open('./id.json') as id_file:
+with open('./input/nodes.json') as nodes_file, open('./input/id.json') as id_file:
     nodes = json.load(nodes_file)
     label_to_id = json.load(id_file)
 
