@@ -1,12 +1,14 @@
 
-import os
-from help_embed import help_paginator
 import json
-from discord import Embed, File, SlashCommandOptionType, Attachment
-from discord.ext import bridge
+import os
+
+from discord import Attachment, Embed, File
 from discord.commands import option
-from solver import solver
+from discord.ext import bridge
 from dotenv import load_dotenv
+
+from help_embed import help_paginator
+from solver import solver
 
 # Load .env
 load_dotenv()
