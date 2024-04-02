@@ -25,7 +25,7 @@ ORIENTATION_DESC = 'Orientation of tree by root node. Options are bottom/top/lef
 bot = bridge.Bot()
 
 FUNCTION_OPTIONS = ['/add_to_database', '/solve', '/solve orientation options']
-target_choices = label_to_id['ids'].keys()
+# target_choices = label_to_id['ids'].keys()
 ORIENTATION_CHOICES = ['bottom', 'top', 'left', 'right']
 
 class _SetEncoder(json.JSONEncoder):
@@ -132,7 +132,7 @@ async def add_to_database(ctx, file):
             nodes_file.write(json.dumps(nodes, indent=4, cls=_SetEncoder))
             id_file.write(json.dumps(label_to_id, indent=4))
         
-        target_choices = label_to_id['ids'].keys()
+        # target_choices = label_to_id['ids'].keys()
 
         await ctx.respond(f'Thanks, you have added {added_recipes} recipes to my database!')
     else:
@@ -140,7 +140,7 @@ async def add_to_database(ctx, file):
     
 # /solve command
 @bot.slash_command(description=SOLVE_DESC)
-@option('target', type=str, description=TARGET_DESC, choices=target_choices, required=True)
+@option('target', type=str, description=TARGET_DESC, required=True)
 @option('orientation', type=str, description=ORIENTATION_DESC, choices=ORIENTATION_CHOICES, required=False, default='bottom')
 async def solve(ctx, target, orientation):
     try:
