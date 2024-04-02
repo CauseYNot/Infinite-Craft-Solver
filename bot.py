@@ -5,9 +5,11 @@ import os
 from discord import Attachment, Embed, File
 from discord.commands import option
 from discord.ext import bridge
+from discord.ext.pages import Paginator
 from dotenv import load_dotenv
 
-from help_embed import help_paginator
+from help_embed import (add_to_database_help_page, help_pages,
+                        orientation_help_pages, solve_help_page)
 from solver import solver
 
 # Load .env
@@ -72,16 +74,25 @@ def _best_recipe(recipes, key, nodes, label_to_id, new_id):
 
 # /help command
 @bot.slash_command(description=HELP_DESC)
-async def help(ctx):
-    # Creates Paginator to switch between help pages
-    await help_paginator.respond(ctx)
+@option('function', description='What you want help with (leave blank for full message)', choices=['/add_to_database', '/solve', '/solve orientation options'], required=False, default=None)
+async def help(ctx, function):
+    match function:
+        case '/add_to_database':
+            await ctx.respond(embed=add_to_database_help_page)
+        case '/solve':
+            await ctx.respond(embed=solve_help_page)
+        case '/solve orientation options':
+            await Paginator(orientation_help_pages, use_default_buttons=True).respond(ctx)
+        case None:
+            await Paginator(help_pages, use_default_buttons=True).respond(ctx)
 
 @bot.slash_command(description=ADD_TO_DATABASE_DESC)
 @option('file', type=Attachment, required=True)
 async def add_to_database(ctx, file):
     # Check for json file
-    if file.filename.split('.')[-1] != 'json':
+    if not file.filename.endswith('.json'):
         await ctx.respond('The file you sent is not a json file!')
+        
     with open('./input/nodes.json') as nodes_file, open('./input/id.json') as id_file:
         # Initialise string to write to
         nodes = json.load(nodes_file)

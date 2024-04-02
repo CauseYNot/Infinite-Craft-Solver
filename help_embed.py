@@ -1,6 +1,6 @@
 
 from discord import Embed, File
-from discord.ext.pages import Page, Paginator
+from discord.ext.pages import Page
 
 main_help_msg = '''
 This is a bot coded by CauseYNot, made to find recipes for the game Infinite Craft on neal.fun.
@@ -38,15 +38,18 @@ left_orientation_help_page = Embed(title='Infinite Craft Solver - Help (\'left\'
 left_orientation_help_page.set_image(url='attachment://left.png')
 right_orientation_help_page = Embed(title='Infinite Craft Solver - Help (\'right\' orientation)')
 right_orientation_help_page.set_image(url='attachment://right.png')
-help_paginator = Paginator(
-    pages=[
-        Page(embeds=[main_help_page]),
-        Page(embeds=[add_to_database_help_page]),
-        Page(embeds=[solve_help_page]),
-        Page(embeds=[bottom_orientation_help_page], files=[bottom_image]),
-        Page(embeds=[top_orientation_help_page], files=[top_image]),
-        Page(embeds=[left_orientation_help_page], files=[left_image]),
-        Page(embeds=[right_orientation_help_page], files=[right_image])
-    ],
-    use_default_buttons=True
-    )
+orientation_help_pages = [
+    Page(embeds=[bottom_orientation_help_page], files=[bottom_image]),
+    Page(embeds=[top_orientation_help_page], files=[top_image]),
+    Page(embeds=[left_orientation_help_page], files=[left_image]),
+    Page(embeds=[right_orientation_help_page], files=[right_image])
+]
+help_pages = [
+    Page(embeds=[main_help_page]),
+    Page(embeds=[add_to_database_help_page]),
+    Page(embeds=[solve_help_page]),
+    Page(embeds=[bottom_orientation_help_page], files=[bottom_image]),
+    Page(embeds=[top_orientation_help_page], files=[top_image]),
+    Page(embeds=[left_orientation_help_page], files=[left_image]),
+    Page(embeds=[right_orientation_help_page], files=[right_image])
+]
