@@ -10,18 +10,23 @@ from dotenv import load_dotenv
 
 from help_embed import (add_to_database_help_page, help_pages,
                         orientation_help_pages, solve_help_page)
-from solver import solver
+from solver import solver, nodes, label_to_id
 
 # Load .env
 load_dotenv()
 # Set constants and bot
 TOKEN = os.getenv('TOKEN')
 HELP_DESC = 'Sends help message'
+FUNCTION_DESC = 'What you want help with'
 ADD_TO_DATABASE_DESC = 'Takes your `infinitecraft.json` and adds any new recipes to the database.'
 SOLVE_DESC = 'Creates a tree in the form of an image of how to create a target node'
 TARGET_DESC = 'What you want to find (case-sensitive)!'
 ORIENTATION_DESC = 'Orientation of tree by root node. Options are bottom/top/left/right (default bottom)'
 bot = bridge.Bot()
+
+FUNCTION_OPTIONS = ['/add_to_database', '/solve', '/solve orientation options']
+target_choices = label_to_id.keys()
+ORIENTATION_CHOICES = ['bottom', 'top', 'left', 'right']
 
 class _SetEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -74,7 +79,7 @@ def _best_recipe(recipes, key, nodes, label_to_id, new_id):
 
 # /help command
 @bot.slash_command(description=HELP_DESC)
-@option('function', description='What you want help with (leave blank for full message)', choices=['/add_to_database', '/solve', '/solve orientation options'], required=False, default=None)
+@option('function', description=FUNCTION_DESC, choices=FUNCTION_OPTIONS, required=False, default=None)
 async def help(ctx, function):
     match function:
         case '/add_to_database':
@@ -93,32 +98,31 @@ async def add_to_database(ctx, file):
     if not file.filename.endswith('.json'):
         await ctx.respond('The file you sent is not a json file!')
         
-    with open('./input/nodes.json') as nodes_file, open('./input/id.json') as id_file:
-        # Initialise string to write to
-        nodes = json.load(nodes_file)
-        label_to_id = json.load(id_file)
-        # Read the input file and get the recipes
-        json_bytes = await file.read()
-        input_recipes = json.loads(json_bytes)['recipes']
-        # Track added recipes to respond to the user with
-        added_recipes = 0
-        new_id = label_to_id['new_id']
-        to_visit = list(input_recipes.keys())
-        error_keys = []
-        while to_visit:
-            key = to_visit.pop(0)
-            try:
-                nodes, label_to_id, new_id, added = _best_recipe(input_recipes[key], key, nodes, label_to_id, new_id)
-                if added:
-                    added_recipes += 1
-                
-                error_keys = []
-            except KeyError as e:
-                if key in error_keys:
-                    continue
-                
-                error_keys.append(key)
-                to_visit.append(key)
+    # Initialise string to write to
+    nodes = json.load(nodes_file)
+    label_to_id = json.load(id_file)
+    # Read the input file and get the recipes
+    json_bytes = await file.read()
+    input_recipes = json.loads(json_bytes)['recipes']
+    # Track added recipes to respond to the user with
+    added_recipes = 0
+    new_id = label_to_id['new_id']
+    to_visit = list(input_recipes.keys())
+    error_keys = []
+    while to_visit:
+        key = to_visit.pop(0)
+        try:
+            nodes, label_to_id, new_id, added = _best_recipe(input_recipes[key], key, nodes, label_to_id, new_id)
+            if added:
+                added_recipes += 1
+            
+            error_keys = []
+        except KeyError as e:
+            if key in error_keys:
+                continue
+            
+            error_keys.append(key)
+            to_visit.append(key)
         
     # print(error_keys)
     # Check if the file had added any new recipes
@@ -127,6 +131,8 @@ async def add_to_database(ctx, file):
         with open('./input/nodes.json', 'w') as nodes_file, open('./input/id.json', 'w') as id_file:
             nodes_file.write(json.dumps(nodes, indent=4, cls=_SetEncoder))
             id_file.write(json.dumps(label_to_id, indent=4))
+        
+        target_choices = label_to_id.keys()
 
         await ctx.respond(f'Thanks, you have added {added_recipes} recipes to my database!')
     else:
@@ -134,8 +140,8 @@ async def add_to_database(ctx, file):
     
 # /solve command
 @bot.slash_command(description=SOLVE_DESC)
-@option('target', type=str, description=TARGET_DESC, required=True)
-@option('orientation', type=str, description=ORIENTATION_DESC, choices=['top', 'bottom', 'left', 'right'], required=False, default='bottom')
+@option('target', type=str, description=TARGET_DESC, choices=target_choices, required=True)
+@option('orientation', type=str, description=ORIENTATION_DESC, choices=ORIENTATION_CHOICES, required=False, default='bottom')
 async def solve(ctx, target, orientation):
     try:
         # This sets the orientation of the tree
